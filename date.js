@@ -18,6 +18,5 @@ let minutes = date_ob.getMinutes();
 
 // prints date & time in YYYY-MM-DD HH:MM format
 var dateStr = year + "-" + month + "-" + date + " " + hours + ":" + minutes
-console.log(dateStr);
 
 exports.dateStr = dateStr;

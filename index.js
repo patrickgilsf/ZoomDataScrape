@@ -49,6 +49,8 @@ var fileData = fileHeader + roomData
 createFile(fileStr, fileData, (err) => {
 	if(err) {
 		console.error(err);
+	} else {
+		console.log(`New File was successfully created at ${dateStr}`)
 	}
 })
 
