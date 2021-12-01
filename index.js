@@ -4,6 +4,7 @@ const rp = require('request-promise');
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const createFile = require('create-file');
+const date = require('./date.js');
 
 
 var options = {
@@ -22,23 +23,30 @@ request(options, function (error, response, body) {
 	var zr = parsed.zoom_rooms;
 //this creates the list
 var newArr = [];
-var newStr = "";
+var roomData = "";
 Object.entries(zr).forEach(
     ([key, value]) => {
 		if (value.status === "Offline") {
 			newArr.push(zr[key]);
-			newStr = newStr + zr[key].room_name + '\n'
+			roomData = roomData + zr[key].room_name + '\n'
 		}
 	}
 );
+
 //this creates a file with current date (sliced), within this codes' directory
-let date = new Date();
-let dateStr = date.toString().slice(0,10);
+let dateStr = date.dateStr;
 let fileStr = './FileOutput/' + dateStr;
 
+//this creates a full file with a header
+var fileHeader = 
+`This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
 
+Rooms Offline:
+`
+var fileData = fileHeader + roomData
 
-createFile(fileStr, newStr, (err) => {
+//this generates the file
+createFile(fileStr, fileData, (err) => {
 	if(err) {
 		console.error(err);
 	}
