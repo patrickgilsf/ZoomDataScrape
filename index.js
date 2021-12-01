@@ -35,7 +35,7 @@ Object.entries(zr).forEach(
 
 //this creates a file with current date (sliced), within this codes' directory
 let dateStr = date.dateStr;
-let fileStr = './FileOutput/' + dateStr;
+let fileStr = './FileOutput/Zoom Offline Rooms Report for ' + dateStr;
 
 //this creates a full file with a header
 var fileHeader = 
