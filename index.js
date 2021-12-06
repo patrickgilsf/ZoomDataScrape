@@ -15,18 +15,30 @@ var options = {
 	}
 };
 
+//list of rooms to not have on list:
+var excList = [
+	'Daimler',
+	'Jason Tracey',
+	"Patrick\'s Zoom Room",
+	'SEA-34 Kiosk - MacMini+iPad test',
+	'SEA-34 Kiosk - Virtual IT',
+	'SEA-37 Kiosk - Virtual IT',
+	'SFO-10 Kiosk - Virtual IT',
+	'IRV-8 Kiosk - Virtual IT'
+];
 request(options, function (error, response, body) {
 
 //this code works
 	if (error) throw new Error(error);
 	var parsed = JSON.parse(body)
 	var zr = parsed.zoom_rooms;
+	//console.log(zr)
 //this creates the list
 var newArr = [];
 var roomData = "";
 Object.entries(zr).forEach(
     ([key, value]) => {
-		if (value.status === "Offline") {
+		if (value.health === "critical" && !excList.includes(value.room_name)) {
 			newArr.push(zr[key]);
 			roomData = roomData + zr[key].room_name + '\n'
 		}
@@ -53,5 +65,4 @@ createFile(fileStr, fileData, (err) => {
 		console.log(`New File was successfully created at ${dateStr}`)
 	}
 })
-
 });
