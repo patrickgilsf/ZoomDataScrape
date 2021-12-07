@@ -45,6 +45,9 @@ Object.entries(zr).forEach(
 	}
 );
 
+var roomsOff = newArr.length;
+var roomsExc = excList.length;
+
 //this creates a file with current date (sliced), within this codes' directory
 let dateStr = date.dateStr;
 let fileStr = './FileOutput/Zoom Offline Rooms Report for ' + dateStr;
@@ -53,7 +56,8 @@ let fileStr = './FileOutput/Zoom Offline Rooms Report for ' + dateStr;
 var fileHeader = 
 `This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
 
-Rooms Offline:
+There are a total of ${roomsOff} offline, plus ${roomsExc} rooms on the exclusion list. Rooms Offline:
+
 `
 var fileData = fileHeader + roomData
 
