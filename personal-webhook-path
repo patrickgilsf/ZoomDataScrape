@@ -1,5 +1,0 @@
-hook:
-https://hooks.slack.com/services/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
-
-sample curl:
-curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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

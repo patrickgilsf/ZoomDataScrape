@@ -4,14 +4,15 @@
     "description": "Testing Rest API calls with Zoom API",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Patrick Gilligan",
     "license": "--",
     "dependencies": {
-      "express": "^4.16.3",
-      "jsonwebtoken": "^8.1.0",
-      "request": "^2.87.0",
-      "request-promise": "^4.2.2"
+        "express": "^4.16.3",
+        "googleapis": "^92.0.0",
+        "jsonwebtoken": "^8.1.0",
+        "request": "^2.87.0",
+        "request-promise": "^4.2.2"
     }
-  }
+}

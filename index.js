@@ -3,17 +3,16 @@ var request = require("/Users/patrickgi/node_modules/request");
 const jwt = require('/Users/patrickgi/node_modules/jsonwebtoken');
 const createFile = require('/Users/patrickgi/node_modules/create-file');
 const fs = require('fs');
-const app = 'express';
 
 //other files
 require('dotenv').config()
 const config = require('./config');
 const date = require('./date.js');
 
-
-
-
-
+//Slack
+const { IncomingWebhook } = require('/Users/patrickgi/node_modules/@slack/webhook');
+const url = config.slackWebhook;
+const webhook = new IncomingWebhook(url);
 
 var options = {
 	method: 'GET',
@@ -22,6 +21,9 @@ var options = {
 		bearer: config.token
 	}
 };
+
+//require google app
+// require('child_process').fork('./google.js'); //change the path depending on where the file is.
 
 //list of rooms to not have on list:
 var excList = [
@@ -51,7 +53,9 @@ var excList = [
 	'SEA-40 N Kiosk - Virtual IT',
 	'SEA-40 S Kiosk - Virtual IT',
 	'SFO-7 Kiosk - Virtual IT',
-	'VAN-4 Kiosk - Virtual IT'
+	'VAN-4 Kiosk - Virtual IT',
+	'SEA-34 Kiosk Virtual IT',
+	'SEA-36 Kiosk - Virtual IT'
 ];
 
 request(options, function (error, response, body) {
@@ -77,13 +81,17 @@ var roomsExc = excList.length;
 
 //this creates a file with current date (sliced), within this codes' directory
 var dateStr = date.dateStr;
-var fileStr = '/Users/patrickgi/Documents/Zoom/PG_ZoomDev/ZoomDataScrape/FileOutput/Zoom Offline Rooms Report for ' + dateStr;
+var fileStr = './FileOutput/Zoom Offline Rooms Report for ' + dateStr;
 
 //this creates a full file with a header
 var fileHeader = 
 `This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
 
-There are a total of ${roomsOff} offline, plus ${roomsExc} rooms on the exclusion list. Rooms Offline:
+There are a total of ${roomsOff} offline, plus ${roomsExc} rooms on the exclusion list. 
+
+Talk to Patrick Gilligan for Exclusion List.
+
+Rooms Offline:
 
 `
 var fileData = fileHeader + roomData 
@@ -98,9 +106,15 @@ createFile(fileStr, fileData, (err) => {
 	}
 })
 
+//this sends the data to a Slack channel, commenting out until Google works
+// webhook.send({
+//     text: fileData,
+//   });
+
+
 //this generates a file folder the exclusion list
 var excListStr = '';
-let excListPath = '/Users/patrickgi/Documents/Zoom/PG_ZoomDev/ZoomDataScrape/ExclusionList/Exclusion List';
+let excListPath = './Exclusion List';
 var excListHeader = 
 `This is the exclusion list, updated at ${dateStr}:
 
@@ -120,37 +134,9 @@ fs.writeFile(excListPath, excListFull, 'utf8', (err) => {
 		console.log(`Exclusion List Updated as well`)
 	}
 } )
+
+
 });
 
 
-/*
-/////////////
-//this auto-posts to my Slack channel (still need permissions from zSec + Brandon G.)
-
-
-// The name of the file you're going to upload
-		//using fileStr, from above
-// ID of channel that you want to upload file to
-const channelId = "C02PR1MTL90"//channel I created, hoping to invite app when published
-//Imports
-const slackToken = config.slackToken;
-const { webClient } = require("@slack/web-api")
-const client = new webClient(slackToken)
-
-
-const slackOptions = {
-	method: 'POST',
-	url: 'https://slack.com/api/files.upload',
-	token: slackToken
-};
-
-request(slackOptions, async function (error, response, body) {
-	if (error) throw new Error(error); 
-	const result = await client.files.upload({
-		channels: channelId,
-		initial_comment: `Here is another file generated in Node on {dateStr}, that reports all Offline Zoom Rooms`,
-		file: fs.createReadStream(fileStrl)
-	})
-	console.log(response)
-})
-*/
+exports.excList = excList;
