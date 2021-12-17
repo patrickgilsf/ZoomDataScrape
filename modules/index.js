@@ -14,12 +14,12 @@ import {
 	dateStr
 } from './date.js';
 
-var reportListMakerAndGen = (list, zr) => {
+var reportListMakerAndGen = (excList, zr) => {
     var lenArr = [];
     var roomData = "";
     Object.entries(zr).forEach(
         ([key, value]) => {
-            if (value.health === "critical" && !list.includes(value.room_name)) {
+            if (value.health === "critical" && !excList.includes(value.room_name)) {
                 lenArr.push(zr[key]);
                 roomData = roomData + zr[key].room_name + '\n'
             }
@@ -31,7 +31,7 @@ var reportListMakerAndGen = (list, zr) => {
     var fileHeader = 
 `This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
     
-There are a total of ${lenArr.length} offline, plus ${list.length} rooms on the exclusion list. 
+There are a total of ${lenArr.length} offline, plus ${excList.length} rooms on the exclusion list. 
     
 The ExclusionList can be found at https://docs.google.com/spreadsheets/d/1O5SGlAWSrmGrSluc296agzFqYKP31gaQcjm23z42LdY/edit#gid=0
     
@@ -59,20 +59,20 @@ Rooms Offline:
 } //dont comment this bracket out
 
 //this adds line breaks to the exclusion list, then updates the ExclusionList
-var fileWriter = (ex) => {
+var fileWriter = (excList) => {
     var excListHeader = 
 `This is the exclusion list, updated at ${dateStr}:
 
 `;
     //var excListStr = '';
     var excListPath = './ExclusionList/Exclusion List'; 
-	var excListFull = excListHeader + ex;
+	var excListFull = excListHeader + excList;
 //this uses fs to check and update the ExclusionList file
 	fs.writeFile(excListPath, excListFull, 'utf8', (err) => {
 		if(err) {
 			console.error(err);
 		} else {
-			console.log(`Exclusion List Updated as well`)
+			console.log(`Exclusion List Updated from Google Sheets`)
 		}
 	} )
 }
