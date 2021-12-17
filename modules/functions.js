@@ -5,16 +5,13 @@ import createFile from 'create-file';
 import fs from 'fs';
 import { IncomingWebhook } from '@slack/webhook';
 import {
-	slackWebhook,
-	token
+    slackWebhook,
+    auth,
+    options
 } from './config.js';
 import {
 	dateStr
 } from './date.js';
-import {
-    options,
-    auth
-} from "./modules/config.js";
 
 /*
 * This function sends makes a post in a slack channel
