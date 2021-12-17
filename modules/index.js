@@ -52,7 +52,7 @@ var reportListFactory = (list, zr) => {
     var roomData = "";
     Object.entries(zr).forEach(
         ([key, value]) => {
-            if (value.health === "critical" && !list.includes(value.room_name)) {
+            if (value.health === "critical" && !excList.includes(value.room_name)) {
                 lenArr.push(zr[key]);
                 roomData = roomData + zr[key].room_name + '\n'
             }

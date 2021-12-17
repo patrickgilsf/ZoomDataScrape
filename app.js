@@ -9,26 +9,21 @@ import { //from config file
 } from "./modules/config.js";
 import { //from index file
     reportListFactory,
-    //reportGen,
-    //slackPush,
     updateExclusionList
 } from "./modules/index.js";
 
 const app = express();
-// import { auth } from './config.js'
-
-
 
 //handlers/////////////////////////////////////////////
 
 //request to Zoom
-var zoomReq = (list, listStr) => {
+var zoomReq = (list) => {
     request(options, (err, res, body) => {
+        console.log('Requesting data from Zoom...');
         if (err) throw new Error(err);
         else {
-            console.log('requesting to zoom');
+            console.log('Received datat from Zoom!')
             var zr = JSON.parse(body).zoom_rooms;
-            var newList = listStr.split(',');
             reportListFactory(list, zr);
         }
     })
@@ -44,18 +39,14 @@ var excListGetter = () => {
         range: 'ExclusionList!column'
     };
     sheets.spreadsheets.values.get(getSpreadsheetData, (err, response) => {
+        console.log('Requesting data from Google Sheets...');
         if (err) {
             console.Error(err)
         } else {
-            let quickRes = response.data.values;
-            console.log('requesting google');
-            var excList = [];
-            var excListFormat = '';
-            for (var item in quickRes){
-                excList.push(item);
-            }
-            zoomReq(quickRes, quickRes.toString());
-            updateExclusionList(quickRes);
+            console.log('Received data from Google Sheets!');
+            var excList = response.data.values.toString().split(',').join(',\n');
+            zoomReq(excList);
+            updateExclusionList(excList);
         }
        
     });
