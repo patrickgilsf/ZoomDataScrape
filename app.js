@@ -8,10 +8,10 @@ import { //from config file
     auth
 } from "./modules/config.js";
 import { //from index file
-    reportListMakerAndGen,
+    reportListFactory,
     //reportGen,
     //slackPush,
-    fileWriter
+    updateExclusionList
 } from "./modules/index.js";
 
 const app = express();
@@ -29,7 +29,7 @@ var zoomReq = (list, listStr) => {
             console.log('requesting to zoom');
             var zr = JSON.parse(body).zoom_rooms;
             var newList = listStr.split(',');
-            reportListMakerAndGen(list, zr);
+            reportListFactory(list, zr);
         }
     })
 }
@@ -55,7 +55,7 @@ var excListGetter = () => {
                 excList.push(item);
             }
             zoomReq(quickRes, quickRes.toString());
-            fileWriter(quickRes);
+            updateExclusionList(quickRes);
         }
        
     });

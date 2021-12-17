@@ -1,11 +1,9 @@
-//from packages
+//Imports
 import request from 'request';
 import jwt from 'jsonwebtoken';
 import createFile from 'create-file';
 import fs from 'fs';
 import { IncomingWebhook } from '@slack/webhook';
-
-//from other files
 import {
 	slackWebhook,
 	token
@@ -14,7 +12,42 @@ import {
 	dateStr
 } from './date.js';
 
-var reportListMakerAndGen = (list, zr) => {
+/*
+* This function sends makes a post in a slack channel
+* @param {string} fileData
+*/
+var pushSlackData = (fileData) => {
+    console.log('Pushing Data to Slack');
+
+	var webhook = new IncomingWebhook(slackWebhook);
+    webhook.send({
+        text: fileData,
+    });
+}
+
+/*
+* This function creates a file with the data for offline use
+* @param {string} fileStr 
+* @param {string} fileData 
+*/
+var createOfflineRoomsReport = (fileData, fileStr) => {
+    console.log('Creatine Offline Rooms Report...');
+
+    createFile(fileStr, fileData, (err) => {
+        if(err) {
+            console.error(err);
+        } else {
+            console.log(`File was successfully created at ${dateStr}`)
+        }
+    })
+}
+
+/*
+* This function does the damn thing
+* @param {array} list
+* @param {array} zr
+*/
+var reportListFactory = (list, zr) => {
     var lenArr = [];
     var roomData = "";
     Object.entries(zr).forEach(
@@ -26,60 +59,47 @@ var reportListMakerAndGen = (list, zr) => {
         }
     );
 
-//this generates the file
+    //this generates the file
     var fileStr = './FileOutput/Zoom Offline Rooms Report for ' + dateStr;
     var fileHeader = 
-`This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
-    
-There are a total of ${lenArr.length} offline, plus ${list.length} rooms on the exclusion list. 
-    
-The ExclusionList can be found at https://docs.google.com/spreadsheets/d/1O5SGlAWSrmGrSluc296agzFqYKP31gaQcjm23z42LdY/edit#gid=0
-    
-Rooms Offline:
-    
-`;
+            `This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
+                
+            There are a total of ${lenArr.length} offline, plus ${list.length} rooms on the exclusion list. 
+                
+            The ExclusionList can be found at https://docs.google.com/spreadsheets/d/1O5SGlAWSrmGrSluc296agzFqYKP31gaQcjm23z42LdY/edit#gid=0
+                
+            Rooms Offline:
+
+            `;
+
     var fileData = fileHeader + roomData;
-    createFile(fileStr, fileData, (err) => {
-        if(err) {
-            console.error(err);
-        } else {
-            console.log(`New Offline Rooms Report File was successfully created at ${dateStr}`)
-        }
-    })
-    
 
-//this sends the data to a Slack channel
-	const url = slackWebhook;
-	const webhook = new IncomingWebhook(url);
-	console.log('Pushing Data to Slack')
-    webhook.send({
-        text: fileData,
-      });
+    createOfflineRoomsReport(fileData, fileStr);
+    pushSlackData(fileData);
+}
 
-} //dont comment this bracket out
+/*
+* This adds line breaks to the exclusion list, then updates the ExclusionList
+* @param {array} list
+* @param {array} zr
+*/
+var updateExclusionList = (ex) => {
+    console.log(`Updating Exclusion List`);
 
-//this adds line breaks to the exclusion list, then updates the ExclusionList
-var fileWriter = (ex) => {
-    var excListHeader = 
-`This is the exclusion list, updated at ${dateStr}:
-
-`;
-    //var excListStr = '';
+    var excListHeader = 'This is the exclusion list, updated at ${dateStr}:';
     var excListPath = './ExclusionList/Exclusion List'; 
 	var excListFull = excListHeader + ex;
-//this uses fs to check and update the ExclusionList file
-	fs.writeFile(excListPath, excListFull, 'utf8', (err) => {
+
+    fs.writeFile(excListPath, excListFull, 'utf8', (err) => {
 		if(err) {
 			console.error(err);
 		} else {
-			console.log(`Exclusion List Updated as well`)
+            console.log('Exclusion List Updated at ${dateStr}')
 		}
-	} )
+	});
 }
 
-
-
 export {
-    reportListMakerAndGen,
-    fileWriter,
+    reportListFactory,
+    updateExclusionList,
 }

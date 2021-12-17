@@ -130,7 +130,7 @@ var excListHeader =
 var excListFull = excListHeader + excListStr;
 
 //this uses fs to check and update the ExclusionList file
-// export var fileWriter = () => {
+// export var updateExclusionList = () => {
 	fs.writeFile(excListPath, excListFull, 'utf8', (err) => {
 		if(err) {
 			console.error(err);
