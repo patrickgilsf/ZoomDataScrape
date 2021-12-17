@@ -48,17 +48,17 @@ var createOfflineRoomsReport = (fileData, fileStr) => {
 
 /*
 * This function does the damn thing
-* @param {array} list
-* @param {array} zr
+* @param {array} exclusionList
+* @param {array} zoomRooms
 */
-var reportListFactory = (list, zr) => {
+var reportListFactory = (exclusionList, zoomRooms) => {
     var lenArr = [];
     var roomData = "";
-    Object.entries(zr).forEach(
+    Object.entries(zoomRooms).forEach(
         ([key, value]) => {
-            if (value.health === "critical" && !excList.includes(value.room_name)) {
-                lenArr.push(zr[key]);
-                roomData = roomData + zr[key].room_name + '\n'
+            if (value.health === "critical" && !exclusionList.includes(value.room_name)) {
+                lenArr.push(zoomRooms[key]);
+                roomData = roomData + zoomRooms[key].room_name + '\n'
             }
         }
     );
@@ -67,7 +67,7 @@ var reportListFactory = (list, zr) => {
     var fileHeader = 
             `This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
                 
-            There are a total of ${lenArr.length} offline, plus ${list.length} rooms on the exclusion list. 
+            There are a total of ${lenArr.length} offline, plus ${exclusionList.length} rooms on the exclusion list. 
                 
             The ExclusionList can be found at https://docs.google.com/spreadsheets/d/1O5SGlAWSrmGrSluc296agzFqYKP31gaQcjm23z42LdY/edit#gid=0
                 
@@ -82,16 +82,15 @@ var reportListFactory = (list, zr) => {
 }
 
 /*
-* This adds line breaks to the exclusion list, then updates the ExclusionList
-* @param {array} list
-* @param {array} zr
+* This adds line breaks to the exclusion list, then updates the ExclusionList file
+* @param {array} exclusionList
 */
-var updateExclusionList = (ex) => {
+var updateExclusionList = (exclusionList) => {
     console.log('Updating Exclusion List...');
 
     var excListHeader = 'This is the exclusion list, updated at ${dateStr}:';
     var excListPath = './ExclusionList/Exclusion List'; 
-	var excListFull = excListHeader + ex;
+	var excListFull = excListHeader + exclusionList;
 
     fs.writeFile(excListPath, excListFull, 'utf8', (err) => {
 		if(err) {
@@ -104,10 +103,9 @@ var updateExclusionList = (ex) => {
 
 /*
 * This makes the api call to zoom
-* @param {array} list
 * @return {array} zoomRooms
 */
-var zoomRequest = (list) => {
+var zoomRequest = () => {
     request(options, (err, res, body) => {
         console.log('Requesting data from Zoom...');
         if (err) throw new Error(err);
@@ -120,7 +118,7 @@ var zoomRequest = (list) => {
 
 /*
 * This makes the api call to google sheets
-* @return {array} excList
+* @return {array} exclusionList
 */
 var googleRequest = () => {
     google.options({auth});
@@ -141,7 +139,6 @@ var googleRequest = () => {
             console.log('Received data from Google Sheets!');
             return response.data.values.toString().split(',').join(',\n');
         }
-       
     });
 }
 

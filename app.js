@@ -9,14 +9,13 @@ import {
 
 const app = express();
 
-var excList = googleRequest();
-updateExclusionList(excList);
+var exclusionList = googleRequest();
+updateExclusionList(exclusionList);
 
-if(excList){
-    var zr = zoomRequest(excList);
-    reportListFactory(excList, zr);
+if(exclusionList){
+    var zoomRooms = zoomRequest();
+    reportListFactory(exclusionList, zoomRooms);
+    console.log('Great Success!');
 } else {
     console.log('Error creating exclusion list, try again.');
 }
-
-excListGetter(); 
