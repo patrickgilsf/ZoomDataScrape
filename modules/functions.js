@@ -14,7 +14,7 @@ import {
 } from './date.js';
 
 /*
-* This function sends makes a post in a slack channel
+* This function makes a post in a slack channel
 * @param {string} fileData
 */
 var pushSlackData = (fileData) => {

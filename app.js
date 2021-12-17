@@ -10,12 +10,12 @@ import {
 const app = express();
 
 var exclusionList = googleRequest();
-updateExclusionList(exclusionList);
+var zoomRooms = zoomRequest();
 
-if(exclusionList){
-    var zoomRooms = zoomRequest();
+if(exclusionList && zoomRooms){
+    updateExclusionList(exclusionList);
     reportListFactory(exclusionList, zoomRooms);
     console.log('Great Success!');
 } else {
-    console.log('Error creating exclusion list, try again.');
+    console.log('Error retriving data, try again.');
 }
