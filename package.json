@@ -1,14 +1,16 @@
 {
-    "name": "zoom-data-scrape",
+    "name": "zoom-rooms-offline-report",
     "version": "1.0.0",
     "description": "Testing Rest API calls with Zoom API",
-    "main": "index.js",
+    "main": "app.js",
+    "type": "module",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Patrick Gilligan",
     "license": "--",
     "dependencies": {
+        "dotenv": "^10.0.0",
         "express": "^4.16.3",
         "googleapis": "^92.0.0",
         "jsonwebtoken": "^8.1.0",
