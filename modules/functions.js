@@ -1,4 +1,6 @@
 //Imports
+import request from 'request';
+import { google } from 'googleapis';
 import createFile from 'create-file';
 import fs from 'fs';
 import { IncomingWebhook } from '@slack/webhook';
@@ -9,6 +11,10 @@ import {
 import {
 	dateStr
 } from './date.js';
+import {
+    options,
+    auth
+} from "./modules/config.js";
 
 /*
 * This function sends makes a post in a slack channel
@@ -96,7 +102,52 @@ var updateExclusionList = (ex) => {
 	});
 }
 
+/*
+* This makes the api call to zoom
+* @param {array} list
+* @return {array} zoomRooms
+*/
+var zoomRequest = (list) => {
+    request(options, (err, res, body) => {
+        console.log('Requesting data from Zoom...');
+        if (err) throw new Error(err);
+        else {
+            console.log('Received data from Zoom!')
+            return JSON.parse(body).zoom_rooms;
+        }
+    })
+}
+
+/*
+* This makes the api call to google sheets
+* @return {array} excList
+*/
+var googleRequest = () => {
+    google.options({auth});
+    
+    var spreadsheetId = '1O5SGlAWSrmGrSluc296agzFqYKP31gaQcjm23z42LdY';
+    var sheets = google.sheets('v4');
+    var getSpreadsheetData = {
+        spreadsheetId,
+        range: 'ExclusionList!column'
+    };
+
+    sheets.spreadsheets.values.get(getSpreadsheetData, (err, response) => {
+        console.log('Requesting data from Google Sheets...');
+
+        if (err) {
+            console.Error(err)
+        } else {
+            console.log('Received data from Google Sheets!');
+            return response.data.values.toString().split(',').join(',\n');
+        }
+       
+    });
+}
+
 export {
     reportListFactory,
     updateExclusionList,
+    zoomRequest,
+    googleRequest
 }

@@ -12,9 +12,6 @@ const slackWebhook = process.env.SLACK_WEBHOOK_URL;
 const googleKey = process.env.GOOGLE_KEY;
 const googleEmail = process.env.GOOGLE_CLIENT_EMAIL;
 
-
-
-
 //zoom api keygen/auth
 const payload = {
     iss: apiKey,
@@ -29,9 +26,6 @@ var options = {
 		'bearer': token
 	}
 };
-
-
-
 
 //google api keygen/auth
 const auth = new google.auth.JWT(
