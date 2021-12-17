@@ -17,7 +17,7 @@ import {
 * @param {string} fileData
 */
 var pushSlackData = (fileData) => {
-    console.log('Pushing Data to Slack');
+    console.log('Pushing Data to Slack...');
 
 	var webhook = new IncomingWebhook(slackWebhook);
     webhook.send({
@@ -59,7 +59,6 @@ var reportListFactory = (list, zr) => {
         }
     );
 
-    //this generates the file
     var fileStr = './FileOutput/Zoom Offline Rooms Report for ' + dateStr;
     var fileHeader = 
             `This file was generated in Node, and reports all Zoom Rooms that were offline at the time and date of the file, which is ${dateStr}.
@@ -84,7 +83,7 @@ var reportListFactory = (list, zr) => {
 * @param {array} zr
 */
 var updateExclusionList = (ex) => {
-    console.log(`Updating Exclusion List`);
+    console.log('Updating Exclusion List...');
 
     var excListHeader = 'This is the exclusion list, updated at ${dateStr}:';
     var excListPath = './ExclusionList/Exclusion List'; 
@@ -94,7 +93,7 @@ var updateExclusionList = (ex) => {
 		if(err) {
 			console.error(err);
 		} else {
-            console.log('Exclusion List Updated at ${dateStr}')
+            console.log(`Exclusion List Updated at ${dateStr}`)
 		}
 	});
 }
